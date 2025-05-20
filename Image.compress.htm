@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Compress images online for free. Choose from multiple compression levels to optimize your images.">
+    <title>Image Compression Tool</title>
+
+    <!-- AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .image-compression-wrapper {
+            max-width: 100%;
+        }
+
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .drop-area {
+            cursor: pointer;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .compression-controls {
+            margin: 20px 0;
+        }
+
+        .compression-controls select {
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .preview-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .loading-indicator {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ad-banner {
+            margin: 20px 0;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-ad {
+            margin-top: 20px;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-ad {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Image Compression Tool</h1>
+    </header>
+
+    <div class="container">
+        <!-- Banner Ad -->
+        <div class="ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <div class="image-compression-wrapper">
+            <div class="drop-zone">
+                <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                <div class="drop-area" onclick="document.getElementById('fileInput').click()">
+                    <p>Click to select images or drag and drop</p>
+                </div>
+            </div>
+
+            <div class="compression-controls">
+                <label>Compression Quality:</label>
+                <select id="compressionLevel">
+                    <option value="90">High Quality (90% quality)</option>
+                    <option value="80">Medium Quality (80% quality)</option>
+                    <option value="70" selected>Optimized (70% quality)</option>
+                    <option value="60">Low Quality (60% quality)</option>
+                    <option value="50">Very Low (50% quality)</option>
+                </select>
+            </div>
+
+            <div class="preview-area">
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Compressing images...</p>
+                </div>
+                <div id="preview"></div>
+            </div>
+        </div>
+
+        <!-- Sidebar Ad -->
+        <div class="sidebar-ad">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="link"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropArea = document.querySelector('.drop-area');
+        const compressionLevel = document.getElementById('compressionLevel');
+        const previewArea = document.getElementById('preview');
+        const loadingIndicator = document.querySelector('.loading-indicator');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        dropArea.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            dropArea.style.borderColor = '#2196F3';
+        }
+
+        function unhighlight(e) {
+            dropArea.style.removeProperty('border-color');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            // Implement your image compression logic here
+            // Here you would typically use a compression library
+        }
+    </script>
+</body>
+</html>
