@@ -1,64 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free online tool to compress your images while maintaining quality. Reduce file size for JPG, PNG, and WebP images.">
-    <meta name="keywords" content="image compressor, compress images, reduce image size, online image optimizer, JPG compressor, PNG compressor">
-    <meta name="author" content="YourName">
-    <meta property="og:title" content="Free Online Image Compression Tool">
-    <meta property="og:description" content="Compress your images online for free while maintaining quality">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourwebsite.com">
-    <meta name="robots" content="index, follow">
-    <title>Free Online Image Compression Tool | Optimize Your Images</title>
-    <link rel="canonical" href="https://yourwebsite.com/image-compressor">
-    <style>
-        :root {
-            --primary-color: #4285f4;
-            --secondary-color: #34a853;
-            --accent-color: #ea4335;
-            --light-gray: #f5f5f5;
-            --dark-gray: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+import java.util.Scanner;
+import java.util.Random;
+
+public class NumberGuessingGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        int numberToGuess = random.nextInt(100) + 1; // random number from 1 to 100
+        int numberOfTries = 0;
+        int guess;
+        boolean hasGuessedCorrectly = false;
+
+        System.out.println("Welcome to the Number Guessing Game!");
+        System.out.println("Guess a number between 1 and 100:");
+
+        while (!hasGuessedCorrectly) {
+            System.out.print("Your guess: ");
+            guess = scanner.nextInt();
+            numberOfTries++;
+
+            if (guess < numberToGuess) {
+                System.out.println("Too low! Try again.");
+            } else if (guess > numberToGuess) {
+                System.out.println("Too high! Try again.");
+            } else {
+                hasGuessedCorrectly = true;
+                System.out.println("Congratulations! You guessed the number in " + numberOfTries + " tries.");
+            }
         }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            line-height: 1.6;
-            color: var(--dark-gray);
-            background-color: var(--light-gray);
-            padding: 0;
-            margin: 0;
-        }
-        
-        header {
-            background-color: white;
-            box-shadow: var(--shadow);
-            padding: 1rem 2rem;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .ad-container {
-            background-color: #f9f9f9;
-            border: 1px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        
+
+        scanner.close();
+    }
+}
         .compressor-app {
             background-color: white;
             border-radius: 8px;
@@ -386,177 +359,4 @@
             let originalFile = null;
             let compressedBlob = null;
             
-            // Update quality value display
-            compressionLevel.addEventListener('input', function() {
-                qualityValue.textContent = this.value;
-            });
-            
-            // Handle drag and drop events
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-            });
-            
-            uploadArea.addEventListener('dragleave', function() {
-                this.classList.remove('active');
-            });
-            
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('active');
-                
-                if (e.dataTransfer.files.length) {
-                    fileInput.files = e.dataTransfer.files;
-                    handleFileSelection();
-                }
-            });
-            
-            // Handle click to select file
-            uploadArea.addEventListener('click', function() {
-                fileInput.click();
-            });
-            
-            // Handle file selection
-            fileInput.addEventListener('change', handleFileSelection);
-            
-            function handleFileSelection() {
-                if (fileInput.files && fileInput.files[0]) {
-                    originalFile = fileInput.files[0];
-                    
-                    // Validate file type
-                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                    if (!validTypes.includes(originalFile.type)) {
-                        alert('Please select a valid image file (JPEG, PNG, or WebP).');
-                        return;
-                    }
-                    
-                    // Display original image
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        originalImg.src = e.target.result;
-                        
-                        // Get image dimensions
-                        const img = new Image();
-                        img.onload = function() {
-                            originalDimensions.textContent = `${this.width}×${this.height}`;
-                        };
-                        img.src = e.target.result;
-                        
-                        // Display original size
-                        originalSize.textContent = formatFileSize(originalFile.size);
-                        
-                        // Enable compress button
-                        compressBtn.disabled = false;
-                    };
-                    reader.readAsDataURL(originalFile);
-                }
-            }
-            
-            // Handle compression
-            compressBtn.addEventListener('click', function() {
-                if (!originalFile) return;
-                
-                compressBtn.disabled = true;
-                compressBtn.textContent = 'Compressing...';
-                
-                // Use canvas to compress image
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Maintain original dimensions or resize if needed
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    
-                    // Draw image on canvas
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // Determine output format
-                    let outputType = 'image/jpeg';
-                    if (outputFormat.value === 'png') {
-                        outputType = 'image/png';
-                    } else if (outputFormat.value === 'webp') {
-                        outputType = 'image/webp';
-                    } else {
-                        // Use original format
-                        outputType = originalFile.type;
-                    }
-                    
-                    // Quality setting (only affects JPEG and WebP)
-                    const quality = compressionLevel.value / 100;
-                    
-                    // Convert canvas to blob
-                    canvas.toBlob(function(blob) {
-                        compressedBlob = blob;
-                        
-                        // Display compressed image
-                        const compressedUrl = URL.createObjectURL(blob);
-                        compressedImg.src = compressedUrl;
-                        
-                        // Display compressed size
-                        compressedSize.textContent = formatFileSize(blob.size);
-                        
-                        // Display compressed dimensions
-                        compressedDimensions.textContent = `${img.width}×${img.height}`;
-                        
-                        // Calculate reduction percentage
-                        const reductionPercent = ((originalFile.size - blob.size) / originalFile.size * 100).toFixed(1);
-                        reduction.textContent = `${reductionPercent}%`;
-                        
-                        // Show results section
-                        resultsSection.style.display = 'block';
-                        
-                        // Reset button
-                        compressBtn.disabled = false;
-                        compressBtn.textContent = 'Compress Image';
-                        
-                        // Scroll to results
-                        resultsSection.scrollIntoView({ behavior: 'smooth' });
-                    }, outputType, quality);
-                };
-                
-                img.src = URL.createObjectURL(originalFile);
-            });
-            
-            // Handle download
-            downloadBtn.addEventListener('click', function() {
-                if (!compressedBlob) return;
-                
-                const url = URL.createObjectURL(compressedBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                
-                // Determine file extension
-                let extension = 'jpg';
-                if (outputFormat.value === 'png') {
-                    extension = 'png';
-                } else if (outputFormat.value === 'webp') {
-                    extension = 'webp';
-                } else if (originalFile.type === 'image/png') {
-                    extension = 'png';
-                } else if (originalFile.type === 'image/webp') {
-                    extension = 'webp';
-                }
-                
-                a.download = `compressed-image.${extension}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-            
-            // Helper function to format file size
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-        });
-    </script>
-</body>
-</html>
+
